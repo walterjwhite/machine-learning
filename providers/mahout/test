@@ -1,0 +1,14 @@
+#!/bin/bash
+
+_options=""
+if [ "$#" -ge "1" ]
+then
+	_options="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+	shift
+fi
+
+mkdir -p /var/log/remote
+
+reset
+rm -rf db
+mvn clean test -Dtest=MahoutRecommenderTest -Dmaven.surefire.debug="$_options" &> test.log

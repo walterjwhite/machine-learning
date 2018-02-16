@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.walterjwhite.modules.machine-learning</groupId>
+    <artifactId>impl</artifactId>
+
+    <packaging>jar</packaging>
+    <name>machine learning - impl</name>
+
+    <parent>
+        <groupId>com.walterjwhite.modules</groupId>
+        <artifactId>machine-learning</artifactId>
+        <version>0.0.15-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.google-guice</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.machine-learning.api</groupId>
+            <artifactId>service</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.datastore.modules</groupId>
+            <artifactId>google-guice-persist-criteria-builder</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.walterjwhite.file</groupId>-->
+            <!--<artifactId>impl</artifactId>-->
+            <!--<version>0.0.15-SNAPSHOT</version>-->
+            <!--<scope>runtime</scope>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>com.walterjwhite.infrastructure.dependencies</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.csv</groupId>
+            <artifactId>api</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.csv</groupId>
+            <artifactId>impl</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.walterjwhite.modules.csv.modules</groupId>
+            <artifactId>apache-commons-csv</artifactId>
+            <version>0.0.15-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+</project>
