@@ -3,8 +3,8 @@ package com.walterjwhite.machine.learning.providers.mahout.service.mahout;
 import com.walterjwhite.machine.learning.api.model.data.DataElement;
 import com.walterjwhite.machine.learning.api.service.DataElementRepository;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import javax.inject.Provider;
-import javax.persistence.criteria.CriteriaQuery;
 import org.apache.mahout.cf.taste.model.Preference;
 
 public class DataElementIterator implements Iterator<Preference> {
@@ -31,8 +31,10 @@ public class DataElementIterator implements Iterator<Preference> {
 
   @Override
   public Preference next() {
-    DataElement dataElement =
-        (DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, index++);
+    if (!hasNext()) throw new NoSuchElementException("No more elements.");
+
+    DataElement dataElement = null;
+    // (DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, index++);
     return (new MahoutPreference(
         dataElement.getSource().getItemId(),
         dataElement.getTarget().getItemId(),

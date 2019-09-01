@@ -1,9 +1,6 @@
 package com.walterjwhite.machine.learning.providers.mahout.service;
 
-import com.google.inject.persist.Transactional;
-import com.walterjwhite.datastore.criteria.EntityReferenceRepository;
-import com.walterjwhite.datastore.criteria.Repository;
-import com.walterjwhite.google.guice.property.property.Property;
+import com.walterjwhite.datastore.api.repository.Repository;
 import com.walterjwhite.machine.learning.api.model.data.EntityPreference;
 import com.walterjwhite.machine.learning.api.model.data.Recommendation;
 import com.walterjwhite.machine.learning.api.service.*;
@@ -11,10 +8,12 @@ import com.walterjwhite.machine.learning.impl.service.AbstractMachineLearningSer
 import com.walterjwhite.machine.learning.providers.mahout.service.mahout.DataElementDataModel;
 import com.walterjwhite.machine.learning.providers.mahout.service.mahout.property.UserNeighborhoodProperty;
 import com.walterjwhite.machine.learning.providers.mahout.service.mahout.property.UserSimilarityProperty;
+import com.walterjwhite.property.impl.annotation.Property;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.jdo.annotations.Transactional;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.model.DataModel;
@@ -22,15 +21,10 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MahoutMachineLearningRecommenderService
     extends AbstractMachineLearningServiceRecommender {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(MahoutMachineLearningRecommenderService.class);
 
-  protected final Provider<EntityReferenceRepository> entityReferenceRepositoryProvider;
   protected final Provider<EntityReferenceMapRepository> entityReferenceMapRepositoryProvider;
   protected final Provider<DataElementRepository> dataElementRepositoryProvider;
   protected final Provider<DataElementAggregationRepository>
@@ -46,7 +40,6 @@ public class MahoutMachineLearningRecommenderService
       @Property(UserNeighborhoodProperty.class) String neighborhoodClassName,
       Provider<Repository> repositoryProvider,
       Provider<RecommendationRepository> recommendationRepositoryProvider,
-      Provider<EntityReferenceRepository> entityReferenceRepositoryProvider,
       Provider<MappedEntityReferenceRepository> mappedEntityReferenceRepositoryProvider,
       Provider<EntityReferenceMapRepository> entityReferenceMapRepositoryProvider,
       Provider<DataElementRepository> dataElementRepositoryProvider,
@@ -55,11 +48,9 @@ public class MahoutMachineLearningRecommenderService
     super(
         repositoryProvider,
         recommendationRepositoryProvider,
-        entityReferenceRepositoryProvider,
         mappedEntityReferenceRepositoryProvider);
     this.similarityClassName = similarityClassName;
     this.neighborhoodClassName = neighborhoodClassName;
-    this.entityReferenceRepositoryProvider = entityReferenceRepositoryProvider;
     this.entityReferenceMapRepositoryProvider = entityReferenceMapRepositoryProvider;
     this.dataElementRepositoryProvider = dataElementRepositoryProvider;
     this.dataElementAggregationRepositoryProvider = dataElementAggregationRepositoryProvider;
@@ -91,8 +82,7 @@ public class MahoutMachineLearningRecommenderService
   @Transactional
   protected void handleRecommendations(
       Recommendation recommendation, final List<RecommendedItem> recommendedItems) {
-    if (recommendedItems != null) LOGGER.info("recommended items:" + recommendedItems.size());
-    else LOGGER.info("recommended items was null");
+    if (recommendedItems == null) return;
 
     // TODO: figure out how to map between a long and string here ...
     recommendedItems.forEach(
@@ -108,7 +98,8 @@ public class MahoutMachineLearningRecommenderService
                         rI.getValue(),
                         recommendation)));
 
-    repository.merge(recommendation);
+    repository.persist(
+        recommendation); // TODO: re-add support for differentiating create/update operations
   }
 
   protected UserSimilarity getUserSimilarity(DataModel dataModel)

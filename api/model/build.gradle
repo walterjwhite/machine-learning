@@ -1,0 +1,5 @@
+group = 'com.walterjwhite.modules.machine-learning.api'
+description = 'machine-learning - API - model'
+dependencies {
+  compile project(':infrastructure:datastore:api:model')
+}

@@ -4,16 +4,10 @@ import com.walterjwhite.machine.learning.api.model.data.DataElement;
 import com.walterjwhite.machine.learning.api.service.DataElementRepository;
 import java.util.Iterator;
 import javax.inject.Provider;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Selection;
 import org.apache.mahout.cf.taste.model.Preference;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MahoutPreferenceArray implements PreferenceArray {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MahoutPreferenceArray.class);
-
   protected final Provider<DataElementRepository> dataElementRepositoryProvider;
   protected final CriteriaQuery<DataElement> criteriaQuery;
 
@@ -26,9 +20,7 @@ public class MahoutPreferenceArray implements PreferenceArray {
     this.dataElementRepositoryProvider = dataElementRepositoryProvider;
     this.criteriaQuery = criteriaQuery;
     Selection selection = criteriaQuery.getSelection();
-    this.count = dataElementRepositoryProvider.get().count(criteriaQuery);
-
-    LOGGER.info("MahoutPreferenceArray:count:" + count + ":" + criteriaQuery.toString());
+    this.count = -1; // dataElementRepositoryProvider.get().count(criteriaQuery);
 
     criteriaQuery.select(selection);
   }
@@ -40,8 +32,8 @@ public class MahoutPreferenceArray implements PreferenceArray {
 
   @Override
   public Preference get(int i) {
-    DataElement dataElement =
-        (DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, i);
+    DataElement dataElement = null;
+    // dataElementRepositoryProvider.get().get(criteriaQuery, i);
     return new MahoutPreference(
         dataElement.getSource().getItemId(),
         dataElement.getTarget().getItemId(),
@@ -50,22 +42,26 @@ public class MahoutPreferenceArray implements PreferenceArray {
 
   @Override
   public long getUserID(int i) {
-    return ((DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, i))
-        .getSource()
-        .getItemId();
+    //    return ((DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, i))
+    //        .getSource()
+    //        .getItemId();
+    return -1;
   }
 
   @Override
   public long getItemID(int i) {
-    return ((DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, i))
-        .getTarget()
-        .getItemId();
+    //    return ((DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, i))
+    //        .getTarget()
+    //        .getItemId();
+    return -1;
   }
 
   @Override
   public float getValue(int i) {
-    return (float)
-        ((DataElement) dataElementRepositoryProvider.get().get(criteriaQuery, i)).getPreference();
+    //    return (float)
+    //        ((DataElement) dataElementRepositoryProvider.get().get(criteriaQuery,
+    // i)).getPreference();
+    return -1;
   }
 
   @Override

@@ -6,37 +6,25 @@ import com.walterjwhite.machine.learning.api.service.DataElementRepository;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import javax.inject.Provider;
+import lombok.AllArgsConstructor;
 import org.apache.mahout.cf.taste.common.Refreshable;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastIDSet;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Use JDBC to make things quick */
+@AllArgsConstructor
 public class DataElementDataModel implements DataModel {
-  private static final Logger LOGGER = LoggerFactory.getLogger(DataElementDataModel.class);
   // TODO: inject this
   protected final DataView dataView;
   protected final Provider<DataElementRepository> dataElementRepositoryProvider;
   protected final Provider<DataElementAggregationRepository>
       dataElementAggregationRepositoryProvider;
 
-  public DataElementDataModel(
-      DataView dataView,
-      Provider<DataElementRepository> dataElementRepositoryProvider,
-      Provider<DataElementAggregationRepository> dataElementAggregationRepositoryProvider) {
-    super();
-    this.dataView = dataView;
-    this.dataElementRepositoryProvider = dataElementRepositoryProvider;
-    this.dataElementAggregationRepositoryProvider = dataElementAggregationRepositoryProvider;
-  }
-
   @Override
   public LongPrimitiveIterator getUserIDs() throws TasteException {
-    LOGGER.info("getUserIDs");
     return (new MahoutLongPrimitiveIterator(
         dataElementAggregationRepositoryProvider,
         dataElementRepositoryProvider.get().getUserIdsForDataView(dataView)));
@@ -44,7 +32,6 @@ public class DataElementDataModel implements DataModel {
 
   @Override
   public LongPrimitiveIterator getItemIDs() throws TasteException {
-    LOGGER.info("getItemIDS");
     return (new MahoutLongPrimitiveIterator(
         dataElementAggregationRepositoryProvider,
         dataElementRepositoryProvider.get().getItemIdsForDataView(dataView)));

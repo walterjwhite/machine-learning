@@ -1,17 +1,12 @@
 package com.walterjwhite.machine.learning.providers.mahout.service.mahout;
 
 import com.walterjwhite.machine.learning.api.service.DataElementAggregationRepository;
+import java.util.NoSuchElementException;
 import javax.inject.Provider;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Selection;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Used to get all user ids and all item ids. */
 public class MahoutLongPrimitiveIterator implements LongPrimitiveIterator {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MahoutLongPrimitiveIterator.class);
-
   protected final Provider<DataElementAggregationRepository>
       dataElementAggregationRepositoryProvider;
   protected final CriteriaQuery<Long> criteriaQuery;
@@ -27,12 +22,10 @@ public class MahoutLongPrimitiveIterator implements LongPrimitiveIterator {
     this.dataElementAggregationRepositoryProvider = dataElementAggregationRepositoryProvider;
 
     Selection priorSelection = criteriaQuery.getSelection();
-    this.count = dataElementAggregationRepositoryProvider.get().count(criteriaQuery);
+    this.count = -1; // dataElementAggregationRepositoryProvider.get().count(criteriaQuery);
 
     // reset the selection back to the implicit root object
     criteriaQuery.select(priorSelection);
-
-    LOGGER.info("MahoutLongPrimitiveIterator:count:" + count + ":" + criteriaQuery);
   }
 
   @Override
@@ -42,7 +35,7 @@ public class MahoutLongPrimitiveIterator implements LongPrimitiveIterator {
 
   @Override
   public long peek() {
-    return ((Long) dataElementAggregationRepositoryProvider.get().get(criteriaQuery, offset));
+    return -1; /*((Long) dataElementAggregationRepositoryProvider.get().get(criteriaQuery, offset))*/
   }
 
   @Override
@@ -57,7 +50,9 @@ public class MahoutLongPrimitiveIterator implements LongPrimitiveIterator {
 
   @Override
   public Long next() {
-    LOGGER.info("next");
-    return ((Long) dataElementAggregationRepositoryProvider.get().get(criteriaQuery, offset++));
+    if (!hasNext()) throw new NoSuchElementException("No more elements");
+
+    return Long.valueOf(
+        -1) /*((Long) dataElementAggregationRepositoryProvider.get().get(criteriaQuery, offset++))*/;
   }
 }

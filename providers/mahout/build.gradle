@@ -1,0 +1,11 @@
+group = 'com.walterjwhite.machine-learning.providers'
+description = 'machine-learning - providers - mahout'
+dependencies {
+  compile project(':infrastructure:dependencies:apache-mahout')
+  compile project(':infrastructure:dependencies:h2')
+  compile project(':infrastructure:dependencies:postgresql')
+  compile project(':infrastructure:dependencies:p6spy')
+  compile project(':infrastructure:dependencies:hikari-jdbc-connection-pool')
+  compile project(':infrastructure:dependencies:hibernate-hikari')
+  testCompile project(':infrastructure:datastore:modules:property-test')
+}

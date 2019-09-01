@@ -1,9 +1,9 @@
 package com.walterjwhite.machine.learning.impl.service;
 
-import com.google.inject.persist.Transactional;
 import com.walterjwhite.datastore.api.model.entity.AbstractEntity;
-import com.walterjwhite.datastore.criteria.EntityReferenceRepository;
-import com.walterjwhite.datastore.criteria.Repository;
+import com.walterjwhite.datastore.api.repository.Repository;
+import com.walterjwhite.datastore.query.entityReference.FindEntityReferenceByTypeAndIdQueryConfiguration;
+import com.walterjwhite.datastore.query.entityType.FindEntityTypeByNameQueryConfiguration;
 import com.walterjwhite.machine.learning.api.model.data.DataElement;
 import com.walterjwhite.machine.learning.api.model.data.DataView;
 import com.walterjwhite.machine.learning.api.model.data.RawEntityPreference;
@@ -17,28 +17,21 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 import javax.inject.Provider;
-import javax.persistence.NoResultException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.jdo.annotations.Transactional;
 
 public abstract class AbstractMachineLearningServiceRecommender
     implements MachineLearningServiceRecommender {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(AbstractMachineLearningServiceRecommender.class);
   protected final Provider<Repository> repositoryProvider;
   protected final Provider<RecommendationRepository> recommendationRepositoryProvider;
-  protected final Provider<EntityReferenceRepository> entityReferenceRepositoryProvider;
   protected final Provider<MappedEntityReferenceRepository> mappedEntityReferenceRepositoryProvider;
 
   public AbstractMachineLearningServiceRecommender(
       Provider<Repository> repositoryProvider,
       Provider<RecommendationRepository> recommendationRepositoryProvider,
-      Provider<EntityReferenceRepository> entityReferenceRepositoryProvider,
       Provider<MappedEntityReferenceRepository> mappedEntityReferenceRepositoryProvider) {
     super();
     this.repositoryProvider = repositoryProvider;
     this.recommendationRepositoryProvider = recommendationRepositoryProvider;
-    this.entityReferenceRepositoryProvider = entityReferenceRepositoryProvider;
     this.mappedEntityReferenceRepositoryProvider = mappedEntityReferenceRepositoryProvider;
   }
 
@@ -85,9 +78,18 @@ public abstract class AbstractMachineLearningServiceRecommender
 
   @Transactional
   protected MappedEntityReferenceItem createMappedEntityReference(AbstractEntity entity) {
+    // @AutoCreate
+    final Repository repository = repositoryProvider.get();
     return mappedEntityReferenceRepositoryProvider
         .get()
-        .findOrCreateBy(entityReferenceRepositoryProvider.get().findOrCreate(entity));
+        .findOrCreateBy(
+            repository.query(
+                new FindEntityReferenceByTypeAndIdQueryConfiguration(
+                    repository.query(
+                        new FindEntityTypeByNameQueryConfiguration(
+                            entity.getClass().getSimpleName())),
+                    entity.getId()) /*,
+                    PersistenceOption.Create*/));
   }
 
   @Transactional
@@ -96,15 +98,7 @@ public abstract class AbstractMachineLearningServiceRecommender
       MappedEntityReferenceItem targetMappedEntityReferenceItem,
       RawEntityPreference rawEntityPreference,
       DataView dataView) {
-    LOGGER.info(
-        "creating data element:"
-            + sourceMappedEntityReferenceItem
-            + ":"
-            + targetMappedEntityReferenceItem
-            + ":"
-            + dataView
-            + ":"
-            + rawEntityPreference.getDateTime());
+
     repositoryProvider
         .get()
         .persist(
@@ -142,7 +136,6 @@ public abstract class AbstractMachineLearningServiceRecommender
   }
 
   //  public static void get(DataView dataView, final String line) {
-  //    LOGGER.info("processing:" + line);
   //
   //    addDataElement(dataView, new CSVDataElementItem())
   //

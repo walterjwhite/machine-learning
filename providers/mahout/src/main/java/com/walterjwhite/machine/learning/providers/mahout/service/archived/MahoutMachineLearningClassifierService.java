@@ -18,12 +18,8 @@ import org.apache.mahout.common.Pair;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileIterable;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.math.Vector.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MahoutMachineLearningClassifierService {
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(MahoutMachineLearningClassifierService.class);
 
   public int classify() throws IOException {
     final String modelPath = "";
@@ -41,17 +37,18 @@ public class MahoutMachineLearningClassifierService {
         readDocumentFrequency(configuration, new Path(documentFrequencyPath));
 
     // analyzer used to extract word from tweet
-    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_43);
+    try (Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_43)) {
 
-    // model is a matrix (wordId, labelId) => probability score
-    NaiveBayesModel model = NaiveBayesModel.materialize(new Path(modelPath), configuration);
+      // model is a matrix (wordId, labelId) => probability score
+      NaiveBayesModel model = NaiveBayesModel.materialize(new Path(modelPath), configuration);
 
-    StandardNaiveBayesClassifier classifier = new StandardNaiveBayesClassifier(model);
+      StandardNaiveBayesClassifier classifier = new StandardNaiveBayesClassifier(model);
 
-    Vector vector = null;
-    Vector resultVector = classifier.classifyFull(vector);
+      Vector vector = null;
+      Vector resultVector = classifier.classifyFull(vector);
 
-    return (selectBestClassifierId(labels, resultVector));
+      return (selectBestClassifierId(labels, resultVector));
+    }
   }
 
   public static Map<String, Integer> readDictionnary(Configuration conf, Path dictionnaryPath) {
@@ -83,9 +80,7 @@ public class MahoutMachineLearningClassifierService {
         bestScore = score;
         bestCategoryId = categoryId;
       }
-      LOGGER.debug("  " + labels.get(categoryId) + ": " + score);
     }
-    LOGGER.debug(" => " + labels.get(bestCategoryId));
 
     return (bestCategoryId);
   }

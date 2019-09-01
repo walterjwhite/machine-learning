@@ -1,38 +1,24 @@
 package com.walterjwhite;
 
-import com.google.inject.persist.jpa.JpaPersistModule;
-import com.walterjwhite.datastore.GoogleGuicePersistModule;
 import com.walterjwhite.datastore.api.model.entity.Tag;
-import com.walterjwhite.datastore.criteria.CriteriaBuilderModule;
-import com.walterjwhite.datastore.criteria.Repository;
+import com.walterjwhite.datastore.api.repository.AbstractEntityRepository;
 import com.walterjwhite.google.guice.GuiceHelper;
-import com.walterjwhite.google.guice.property.test.GuiceTestModule;
 import com.walterjwhite.machine.learning.api.model.data.DataView;
-import com.walterjwhite.machine.learning.api.model.data.EntityPreference;
 import com.walterjwhite.machine.learning.api.model.data.RawEntityPreference;
 import com.walterjwhite.machine.learning.api.model.data.Recommendation;
 import com.walterjwhite.machine.learning.api.service.MachineLearningServiceRecommender;
-import com.walterjwhite.machine.learning.providers.mahout.service.MahoutModule;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MahoutRecommenderTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MahoutRecommenderTest.class);
-
   @Before
   public void onBefore() throws Exception {
-    GuiceHelper.addModules(
-        new MahoutModule(),
-        new GuiceTestModule(),
-        new CriteriaBuilderModule(),
-        new GoogleGuicePersistModule(),
-        new JpaPersistModule("defaultJPAUnit"));
+    GuiceHelper.addModules(new MahoutTestModule(getClass()));
+
     GuiceHelper.setup();
 
     // write sample file
@@ -55,16 +41,17 @@ public class MahoutRecommenderTest {
   @Test
   public void testBasics() throws Exception {
     MachineLearningServiceRecommender machineLearningServiceRecommender =
-        GuiceHelper.getGuiceInjector().getInstance(MachineLearningServiceRecommender.class);
+        GuiceHelper.getGuiceApplicationInjector()
+            .getInstance(MachineLearningServiceRecommender.class);
 
     // final FileDataModel model = new FileDataModel(new File("/tmp/data-set.1"));
-    final File dataFile = new File("/tmp/data-set.1");
+    final File dataFile = new File("/tmp/data-get.1");
 
     //    DataView dataViewI =
-    // (DataView)GuiceHelper.getGuiceInjector().getInstance(Repository.class).get(DataView.class,
+    // (DataView)GuiceHelper.getGuiceApplicationInjector().getInstance(Repository.class).get(DataView.class,
     // 0);
     //    DataElementRepository dataElementRepository =
-    // GuiceHelper.getGuiceInjector().getInstance(DataElementRepository.class);
+    // GuiceHelper.getGuiceApplicationInjector().getInstance(DataElementRepository.class);
     //    CriteriaQuery<DataElement> criteriaQuery =
     // dataElementRepository.getDataElementsForUser(dataViewI, 1);
     ////    criteriaQuery.select(dataElementRepository.getCriteriaQuery().getRoot());
@@ -146,13 +133,13 @@ public class MahoutRecommenderTest {
   }
 
   protected void persistDataElements(List<RawEntityPreference> dataElements) {
-    Repository repository = GuiceHelper.getGuiceInjector().getInstance(Repository.class);
-    dataElements
-        .stream()
+    AbstractEntityRepository entityRepository =
+        GuiceHelper.getGuiceApplicationInjector().getInstance(AbstractEntityRepository.class);
+    dataElements.stream()
         .forEach(
             p -> {
-              repository.persist(p.getSource());
-              repository.persist(p.getTarget());
+              entityRepository.persist(p.getSource());
+              entityRepository.persist(p.getTarget());
             });
   }
 
@@ -170,20 +157,5 @@ public class MahoutRecommenderTest {
       throws Exception {
     Recommendation recommendation =
         machineLearningServiceRecommender.recommend(dataView, userId, quantity);
-    LOGGER.info(
-        "recommended (" + userId + "):" + recommendation.getEntityPreferences().size() + " items");
-    for (EntityPreference entityPreference : recommendation.getEntityPreferences()) {
-      LOGGER.info(
-          "recommended ("
-              + userId
-              + "):"
-              + entityPreference.getEntityReference().getEntityType()
-              + ":"
-              + entityPreference.getEntityReference().getEntityId()
-              + ":"
-              + entityPreference.getRecommendation().getUserId()
-              + ":"
-              + entityPreference.getRecommendation().getDateTime());
-    }
   }
 }

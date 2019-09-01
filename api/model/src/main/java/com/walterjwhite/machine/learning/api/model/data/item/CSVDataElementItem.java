@@ -1,40 +1,20 @@
 package com.walterjwhite.machine.learning.api.model.data.item;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.jdo.annotations.PersistenceCapable;
+import lombok.Data;
+import lombok.ToString;
 
 /** Pointer to a specific row in a CSV file. */
-@Entity
+@Data
+@ToString(doNotUseGetters = true)
+@PersistenceCapable
 public class CSVDataElementItem extends DataElementItem {
   // filename should be from the dataview
-  @Column(nullable = false, updatable = false)
+
   protected long rowNumber;
 
   public CSVDataElementItem(Long itemId, long rowNumber) {
     super(itemId);
     this.rowNumber = rowNumber;
-  }
-
-  public long getRowNumber() {
-    return rowNumber;
-  }
-
-  public void setRowNumber(long rowNumber) {
-    this.rowNumber = rowNumber;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    CSVDataElementItem that = (CSVDataElementItem) o;
-
-    return rowNumber == that.rowNumber;
-  }
-
-  @Override
-  public int hashCode() {
-    return (int) (rowNumber ^ (rowNumber >>> 32));
   }
 }

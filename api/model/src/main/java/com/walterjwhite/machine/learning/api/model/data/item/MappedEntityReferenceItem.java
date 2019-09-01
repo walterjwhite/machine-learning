@@ -1,51 +1,26 @@
 package com.walterjwhite.machine.learning.api.model.data.item;
 
 import com.walterjwhite.datastore.api.model.entity.EntityReference;
-import javax.persistence.*;
+import javax.jdo.annotations.PersistenceCapable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@ToString(doNotUseGetters = true)
+@PersistenceCapable
 public class MappedEntityReferenceItem extends DataElementItem {
 
-  @ManyToOne(optional = false)
-  @JoinColumn(nullable = false, updatable = false)
   protected EntityReference entityReference;
 
-  public MappedEntityReferenceItem(EntityReference entityReference) {
-    super();
-    this.entityReference = entityReference;
-  }
-
-  public MappedEntityReferenceItem() {
-    super();
-  }
-
-  public EntityReference getEntityReference() {
-    return entityReference;
-  }
-
-  public void setEntityReference(EntityReference entityReference) {
-    this.entityReference = entityReference;
-  }
-
-  @PrePersist
-  public void setItemId() {
-    itemId = (long) hashCode();
-  }
-
+  // TODO: why is this here and not in the super class?
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public void jdoPreStore() {
+    super.jdoPreStore();
 
-    MappedEntityReferenceItem that = (MappedEntityReferenceItem) o;
-
-    return entityReference != null
-        ? entityReference.equals(that.entityReference)
-        : that.entityReference == null;
-  }
-
-  @Override
-  public int hashCode() {
-    return entityReference != null ? entityReference.hashCode() : 0;
+    itemId = (long) id;
   }
 }

@@ -3,13 +3,17 @@ package com.walterjwhite.machine.learning.api.model.data;
 import com.walterjwhite.datastore.api.model.entity.AbstractNamedEntity;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.jdo.annotations.PersistenceCapable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Entity
+@Getter
+@Setter
+@ToString(doNotUseGetters = true, callSuper = true)
+@PersistenceCapable
 public class DataView extends AbstractNamedEntity {
-  @OneToMany(cascade = CascadeType.ALL)
+
   protected List<DataElement> dataElements = new ArrayList<>();
 
   public DataView(String name, String description) {
@@ -18,13 +22,5 @@ public class DataView extends AbstractNamedEntity {
 
   public DataView() {
     super();
-  }
-
-  public List<DataElement> getDataElements() {
-    return dataElements;
-  }
-
-  public void setDataElements(List<DataElement> dataElements) {
-    this.dataElements = dataElements;
   }
 }
