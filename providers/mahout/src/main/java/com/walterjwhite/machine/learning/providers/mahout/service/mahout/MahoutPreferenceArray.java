@@ -72,63 +72,63 @@ public class MahoutPreferenceArray implements PreferenceArray {
   // below are unimplemented
   @Override
   public long[] getIDs() {
-    throw (new UnsupportedOperationException("Is this required, for userIds or itemIds, or both?"));
+    throw new UnsupportedOperationException("Is this required, for userIds or itemIds, or both?");
   }
 
   @Override
   public void set(int i, Preference pref) {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void setUserID(int i, long userID) {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void setItemID(int i, long itemID) {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void setValue(int i, float value) {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public PreferenceArray clone() {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void sortByUser() {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void sortByItem() {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void sortByValue() {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public void sortByValueReversed() {
-    throw (new UnsupportedOperationException("this is read-only"));
+    throw new UnsupportedOperationException("this is read-only");
   }
 
   @Override
   public boolean hasPrefWithUserID(long userID) {
     //    return false;
-    throw (new UnsupportedOperationException("is this needed?"));
+    throw new UnsupportedOperationException("is this needed?");
   }
 
   @Override
   public boolean hasPrefWithItemID(long itemID) {
     //    return false;
-    throw (new UnsupportedOperationException("is this needed?"));
+    throw new UnsupportedOperationException("is this needed?");
   }
 }

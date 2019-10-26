@@ -119,16 +119,16 @@ public class DataElementDataModel implements DataModel {
   // Below are not implemented
   @Override
   public void setPreference(long userID, long itemID, float value) throws TasteException {
-    throw (new UnsupportedOperationException("Not supported - create a new view"));
+    throw new UnsupportedOperationException("Not supported - create a new view");
   }
 
   @Override
   public void removePreference(long userID, long itemID) throws TasteException {
-    throw (new UnsupportedOperationException("Not supported - create a new view"));
+    throw new UnsupportedOperationException("Not supported - create a new view");
   }
 
   @Override
   public void refresh(Collection<Refreshable> alreadyRefreshed) {
-    throw (new UnsupportedOperationException("Not supported - use the new view"));
+    throw new UnsupportedOperationException("Not supported - use the new view");
   }
 }
